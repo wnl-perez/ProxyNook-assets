@@ -38,9 +38,9 @@ toggle.addEventListener("change", () => {
 // RANDOM NEXURA IMAGE
 // ===============================
 const images = [
-  "/pics/NexusMA.jpg",
-  "/pics/NexusMB.jpg",
-  "/pics/NexusMG.jpg"
+  "https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/pics/NexusMA.jpg",
+  "https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/pics/NexusMB.jpg",
+  "https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/pics/NexusMG.jpg"
 ];
 const randomImg = document.getElementById("randomImg");
 
