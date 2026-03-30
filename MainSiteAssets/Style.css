@@ -1,0 +1,215 @@
+/* =============================== GENERAL BODY + BACKGROUND ================================ */
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  color: #0f0; /* green text */
+  background: linear-gradient(-45deg, #003300, #0f0, #003300); /* dark green → bright green → dark green */
+  background-size: 400% 400%;
+  animation: gradientGreen 15s ease infinite;
+}
+
+@keyframes gradientGreen {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+/* =============================== NEWS / REVIEWS BOX ================================ */
+.news-box, .reviews-box {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #0f0; /* green border */
+  padding: 20px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 1200px;
+  border-radius: 12px;
+  color: #0f0; /* green text */
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.7); /* green glow */
+  font-family: 'Orbitron', sans-serif;
+  overflow-x: auto;
+}
+.news-box h2, .reviews-box h2 {
+  margin-top: 0;
+  font-size: 26px;
+  color: #0f0; /* green headings */
+}
+.reviews-box ul {
+  padding-left: 20px;
+}
+.reviews-box li {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #0f0; /* green list items */
+}
+/* =============================== STATUS BAR ================================ */
+.status-bar {
+  position: relative;       /* was fixed */
+  bottom: auto;             /* reset bottom */
+  right: auto;              /* reset right */
+  background: linear-gradient(90deg, #004400, #00ff00, #004400); /* dark → bright → dark green */
+  border: 2px solid #0f0;  /* bright green border */
+  border-radius: 12px;
+  padding: 15px 20px;
+  width: 90%;
+  max-width: 800px;
+  margin: 20px auto;        /* center it */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  font-family: 'Orbitron', sans-serif;
+  color: #0f0;              /* bright green text */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+/* BATTERY STYLING */
+.battery {
+  position: relative;
+  width: 120px;
+  height: 30px;
+  border: 3px solid #0f0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #111;
+}
+.battery::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: -10px;
+  width: 8px;
+  height: 18px;
+  background: #0f0;
+  border-radius: 3px;
+}
+.battery-fill {
+  height: 100%;
+  width: 0%;
+  background: #0f0;
+  transition: width 0.3s, background 0.3s;
+}
+.charging .battery-fill {
+  background: #0f0;
+}
+.charging::after {
+  background: #0f0;
+}
+
+/* =============================== GENERAL BODY + BACKGROUND ================================ */
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  color: #0f0; /* green main text */
+  background: linear-gradient(-45deg, #0a0a0a, #001f00, #0a0a0a, #003300); /* dark greenish gradient */
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+}
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =============================== GLOBAL STYLES =================================*/
+body {
+  overflow-x: hidden;
+}
+@keyframes gradientShift {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+body { animation: gradientShift 30s ease infinite; }
+
+/* =============================== TOGGLE NOTES =================================*/
+.notes-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 50;
+}
+.switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #0f0; /* green slider */
+  transition: .4s;
+  border-radius: 26px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px; width: 20px;
+  left: 3px; bottom: 3px;
+  background-color: #111; /* black knob */
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider { background-color: #0f0; }
+input:checked + .slider:before { transform: translateX(24px); }
+
+/* =============================== HEADER + NAVIGATION =================================*/
+.header { text-align: center; padding: 20px; z-index: 10; position: relative; }
+.header .title { font-size: 2.2rem; margin: 0 0 10px 0; color: #0f0; }
+.nav button {
+  margin: 0 5px; padding: 8px 15px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #0f0;
+  color: #0f0;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  transition: 0.2s;
+}
+.nav button:hover { background: rgba(0,255,0,0.3); }
+
+/* =============================== GAME CARDS =================================*/
+.grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px; z-index: 5; position: relative; }
+.card {
+  background: rgba(0,0,0,0.65);
+  border: 1px solid #0f0;
+  border-radius: 10px;
+  width: 220px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+.card:hover { transform: scale(1.05); background: rgba(0,255,0,0.2); }
+.card img { width: 100%; border-top-left-radius: 10px; border-top-right-radius: 10px; }
+.card .title { text-align: center; padding: 10px 0; font-size: 1rem; color: #0f0; }
+
+/* =============================== STATUS BAR =================================*/
+.status-bar {
+  position: fixed;
+  bottom: 10px; right: 10px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #0f0;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  display: flex;
+  gap: 10px;
+  z-index: 50;
+  color: #0f0;
+  box-shadow: 0 0 15px #0f0;
+}
+
+/* =============================== PARTICLES CANVAS =================================*/
+.background { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+#particles { width: 100%; height: 100%; display: block; }
+
+/* =============================== FIXED FOOTER =================================*/
+footer.tag {
+  position: fixed;       /* stay in place */
+  bottom: 10px;          /* distance from bottom */
+  left: 10px;            /* distance from left */
+  padding: 8px 12px;     /* some padding */
+  font-size: 0.85rem;    /* small text */
+  color: #0f0;           /* bright green text */
+  background: rgba(0,0,0,0.6); /* semi-transparent black background */
+  border: 1px solid #0f0;      /* green border */
+  border-radius: 8px;    /* rounded corners */
+  z-index: 50;           /* above other elements */
+}
