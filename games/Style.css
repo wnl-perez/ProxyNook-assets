@@ -1,0 +1,265 @@
+/* ===============================
+   FOOTER FIXED BOTTOM-RIGHT
+=================================*/
+footer.tag {
+  position: fixed;
+  bottom: 15px;    /* distance from bottom */
+  right: 15px;     /* distance from right */
+  text-align: right;
+  padding: 10px 15px;
+  border: 1px solid #0f0;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.6);
+  color: #0f0;
+  font-size: 0.85rem;
+  z-index: 999;     /* make sure it’s on top of everything */
+  text-shadow: 0 0 5px #0f0;
+}
+/* ===============================
+   GLOBAL STYLES
+=================================*/
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  color: #0f0;
+  background: linear-gradient(-45deg, #020617, #0f172a, #001f3f, #0a0a0a);
+  background-size: 400% 400%;
+  overflow-x: hidden;
+  animation: gradientShift 30s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+/* ===============================
+   TOGGLE NOTES
+=================================*/
+.notes-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 50;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #444;
+  transition: .4s;
+  border-radius: 26px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px; width: 20px;
+  left: 3px; bottom: 3px;
+  background-color: #fff;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #0f0;
+}
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+/* ===============================
+   HEADER + NAVIGATION
+=================================*/
+.header {
+  text-align: center;
+  padding: 20px;
+  z-index: 10;
+  position: relative;
+}
+.header .title {
+  font-size: 2.2rem;
+  margin: 0 0 10px 0;
+  color: #0f0;
+  text-shadow: 0 0 5px #0f0;
+}
+.nav button {
+  margin: 0 5px;
+  padding: 8px 15px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #0f0;
+  color: #0f0;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  transition: 0.2s;
+}
+.nav button:hover {
+  background: rgba(0,255,0,0.3);
+}
+
+/* ===============================
+   GAME CARDS (4 per row)
+=================================*/
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 20px;
+  justify-content: center; /* centers the grid */
+  z-index: 5;
+  position: relative;
+}
+
+.card {
+  background: rgba(0,0,0,0.65);
+  border: 2px solid #0f0;
+  border-radius: 12px;
+  width: 100%;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 15px rgba(0,255,0,0.5);
+}
+
+.card:hover {
+  transform: scale(1.05);
+  background: rgba(0,255,0,0.15);
+  box-shadow: 0 0 25px rgba(0,255,0,0.7);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.card .title {
+  text-align: center;
+  padding: 10px 0;
+  font-size: 1rem;
+  color: #0f0;
+  text-shadow: 0 0 5px #0f0;
+}
+
+/* ===============================
+   NEWS / REVIEWS BOXES
+=================================*/
+.news-box, .reviews-box {
+  background: rgba(0,0,0,0.7);
+  border: 2px solid #0f0;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 650px;
+  z-index: 5;
+  position: relative;
+}
+.news-box h2, .reviews-box h2 {
+  margin-top: 0;
+  color: #0f0;
+}
+.reviews-box ul {
+  padding-left: 20px;
+}
+.reviews-box li {
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+}
+
+/* ===============================
+   STATUS BAR
+=================================*/
+.status-bar {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #0f0;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  display: flex;
+  gap: 10px;
+  z-index: 50;
+}
+
+/* BATTERY STYLING */
+.battery {
+  position: relative;
+  width: 120px;
+  height: 30px;
+  border: 3px solid #0f0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #111;
+}
+.battery::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: -10px;
+  width: 8px;
+  height: 18px;
+  background: #0f0;
+  border-radius: 3px;
+}
+.battery-fill {
+  height: 100%;
+  width: 0%; /* JS sets this dynamically */
+  background: #0f0;
+  transition: width 0.3s, background 0.3s;
+}
+.charging .battery-fill {
+  background: #0ff;
+}
+.charging::after {
+  background: #0ff;
+}
+
+/* ===============================
+   PARTICLES CANVAS
+=================================*/
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+#particles {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===============================
+   FOOTER (bottom-right)
+=================================*/
+footer.tag {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  text-align: right;
+  padding: 10px 15px;
+  border: 1px solid #0f0;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.6);
+  color: #0f0;
+  font-size: 0.85rem;
+  z-index: 50;
+  text-shadow: 0 0 5px #0f0;
+}

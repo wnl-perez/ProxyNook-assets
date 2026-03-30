@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Games</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/games/style.css?v=2">
+</head>
+
+<body>
+
+<!-- PARTICLE BACKGROUND -->
+<div class="background">
+  <canvas id="particles"></canvas>
+</div>
+
+<div class="header">
+  <div class="title">🎮 games</div>
+
+  <div class="nav">
+    <button onclick="goBack()">⬅ Go Back</button>
+  </div>
+</div>
+
+<div class="grid">
+
+  <div class="card" onclick="openGame('/games/1FG/minecraft.html')">
+    <img src="/games/pics/mc.png">
+    <div class="title">Minecraft</div>
+  </div>
+
+  <div class="card" onclick="openGame('/games/1FG/smd.html')">
+    <img src="/games/pics/smd.png">
+    <div class="title">Stickman Duel</div>
+  </div>
+
+  <div class="card" onclick="openGame('/games/1FG/Spacewaves.html')">
+    <img src="/games/pics/sw.png">
+    <div class="title">Spacewaves</div>
+  </div>
+
+  <div class="card" onclick="openGame('/games/1FG/Gorillatag.html')">
+    <img src="/games/pics/gt.png">
+    <div class="title">Gorilla Tag</div>
+  </div>
+
+  <div class="card" onclick="openGame('/games/1FG/FNAE.html')">
+    <img src="/games/pics/fnae.png">
+    <div class="title">Five Nights at Stien's</div>
+  </div>
+
+  <div class="card" onclick="openGame('/games/1FG/Drivemad.html')">
+    <img src="/games/pics/dm.png">
+    <div class="title">Drive Mad</div>
+  </div>
+
+</div>
+
+<div class="tag">Wnlperez — Games Library</div>
+
+<script>
+
+/* ===============================
+   OPEN GAME
+================================ */
+function openGame(url) {
+  window.location.href = url;
+}
+
+/* ===============================
+   GO BACK BUTTON
+================================ */
+function goBack() {
+  window.location.href = "/";
+}
+
+/* ===============================
+   PARTICLE BACKGROUND (HOME PAGE STYLE)
+================================ */
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const particles = [];
+const PARTICLE_COUNT = 80;
+
+class Particle {
+  constructor() {
+    this.x = Math.random()*canvas.width;
+    this.y = Math.random()*canvas.height;
+    this.size = Math.random()*2+1;
+    this.speedX = (Math.random()-0.5)*0.5;
+    this.speedY = (Math.random()-0.5)*0.5;
+  }
+
+  update(){
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+  }
+
+  draw(){
+    ctx.fillStyle="rgba(0,255,255,0.7)";
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fill();
+  }
+}
+
+for(let i=0;i<PARTICLE_COUNT;i++){
+  particles.push(new Particle());
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p=>{
+    p.update();
+    p.draw();
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
