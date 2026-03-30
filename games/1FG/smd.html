@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Stickman Duel</title>
+<style>
+html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; display:flex; justify-content:center; align-items:center; }
+button { padding: 20px 50px; font-size: 24px; cursor:pointer; border:none; border-radius:10px; background:#333; color:#fff; }
+button:hover { background:#555; }
+iframe { position:fixed; top:0; left:0; width:100vw; height:100vh; border:none; display:none; }
+</style>
+</head>
+<body>
+<button id="startBtn">Click to Start Stickman Duel</button>
+<iframe id="gameFrame" src="https://script.google.com/macros/s/AKfycbwAoTmRTzE6ydvLBsbUcwDvlzS36xbr263_ttMmz8pBgmf0ih3RHJNeYFe3-evGMeMF/exec"></iframe>
+<script>
+document.getElementById('startBtn').onclick = function() {
+  document.getElementById('gameFrame').style.display = 'block';
+  this.remove();
+};
+</script>
+</body>
+</html>

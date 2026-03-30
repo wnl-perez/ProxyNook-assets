@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>Unity WebGL Player | gorilla tag web</title>
+<style>
+html, body { margin:0; height:100%; overflow:hidden; font-family:sans-serif; }
+#unity-container { position:absolute; inset:0; z-index:1; }
+#unity-canvas { width:100%; height:100%; display:block; cursor:none; }
+#crosshair {
+    position: fixed; top:50%; left:50%;
+    width:20px; height:20px;
+    margin-left:-10px; margin-top:-10px;
+    pointer-events:none; z-index:20;
+}
+#crosshair::before, #crosshair::after { content:''; position:absolute; background:white; }
+#crosshair::before { left:50%; top:0; width:2px; height:100%; transform:translateX(-50%); }
+#crosshair::after { top:50%; left:0; width:100%; height:2px; transform:translateY(-50%); }
+#loading-overlay { position: absolute; bottom: 10px; left: 10px; color: white; font-family: Arial, sans-serif; font-size: 14px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; z-index: 11; }
+</style>
+</head>
+<body>
+<div id="unity-container">
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+</div>
+<div id="crosshair"></div>
+<div id="loading-overlay">Loading: 0%</div>
+
+<script>
+const canvas = document.querySelector("#unity-canvas");
+const overlay = document.querySelector("#loading-overlay");
+const crosshair = document.querySelector("#crosshair");
+
+const buildUrl = "https://cdn.jsdelivr.net/gh/wnl-perez/gtag-web/Build";
+const loaderUrl = buildUrl + "/gtagweb.loader.js";
+
+async function loadSplitData() {
+    const parts = [
+        buildUrl + "/gtagweb-part1.data.unityweb",
+        buildUrl + "/gtagweb-part2.data.unityweb",
+        buildUrl + "/gtagweb-part3.data.unityweb",
+        buildUrl + "/gtagweb-part4.data.unityweb",
+        buildUrl + "/gtagweb-part5.data.unityweb"
+    ];
+    const buffers = [];
+    for(const url of parts){ const r=await fetch(url); buffers.push(await r.arrayBuffer()); }
+    const total = buffers.reduce((n,b)=>n+b.byteLength,0);
+    const merged = new Uint8Array(total);
+    let offset=0;
+    for(const b of buffers){ merged.set(new Uint8Array(b), offset); offset+=b.byteLength; }
+    return new Blob([merged]);
+}
+
+const config = {
+    frameworkUrl: buildUrl + "/gtagweb.framework.js.unityweb",
+    codeUrl: buildUrl + "/gtagweb.wasm.unityweb",
+    streamingAssetsUrl: buildUrl + "/StreamingAssets",
+    companyName: "boolonx",
+    productName: "gorilla tag web",
+    productVersion: "1.0"
+};
+
+// Load Unity
+const script = document.createElement("script");
+script.src = loaderUrl;
+script.onload = async () => {
+    const mergedData = await loadSplitData();
+    config.dataUrl = URL.createObjectURL(mergedData);
+
+    createUnityInstance(canvas, config, progress=>{
+        overlay.innerText = `Loading: ${(progress*100).toFixed(0)}%`;
+    }).then(unityInstance=>{
+        overlay.style.opacity=0;
+        setTimeout(()=>overlay.style.display="none",500);
+
+        // Make sure canvas cursor stays hidden
+        canvas.style.cursor="none";
+
+        // Auto fullscreen
+        unityInstance.SetFullscreen(1);
+
+        // Resize canvas dynamically
+        function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // POINTER LOCK
+        function requestLock(){
+            canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+            if(canvas.requestPointerLock) canvas.requestPointerLock();
+        }
+
+        // Lock mouse on first click anywhere on canvas
+        canvas.addEventListener("click", requestLock);
+
+        // Re-lock if released
+        document.addEventListener('pointerlockchange', ()=>{
+            if(document.pointerLockElement!==canvas) console.log("Mouse released, click canvas to re-lock.");
+        });
+
+    }).catch(err=>{ overlay.innerText="Failed to load Unity WebGL build."; console.error(err); });
+};
+document.body.appendChild(script);
+</script>
+</body>
+</html>

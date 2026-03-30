@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <base href="https://cdn.jsdelivr.net/gh/wnl-perez/Space-waves/">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Space Waves Loader</title>
+
+  <style>
+    html, body { margin:0; height:100%; overflow:hidden; font-family:sans-serif; }
+
+    /* Blurred background wrapper */
+    #bg-blur { position: fixed; inset:0; overflow:hidden; filter: blur(5px); z-index:0; }
+
+    /* Gradient background */
+    #loader-bg {
+      position:absolute; inset:0;
+      background: linear-gradient(135deg, #FF4EF7, #00B2FF);
+      background-size:400% 400%;
+      animation: gradientMove 20s ease infinite;
+    }
+
+    /* Waves */
+    .wave {
+      position:absolute; width:300%; height:300%;
+      background: rgba(255,255,255,0.15);
+      border-radius:50%;
+      transform: translate(-50%, -50%);
+      animation: waveMove 12s linear infinite alternate;
+    }
+    .wave:nth-child(2){ background: rgba(255,255,255,0.1); animation-duration:16s; }
+    .wave:nth-child(3){ background: rgba(255,255,255,0.08); animation-duration:20s; }
+
+    /* Among Us sprite scaled x5 */
+    #amongus { position:absolute; width:160px; height:auto; transition: top 0.5s linear, left 0.5s linear; }
+
+    /* Neon Text */
+    #neon-text {
+      position:absolute; top:30px; width:100%; text-align:center;
+      font-size:40px; font-weight:bold;
+      background: linear-gradient(90deg, #39FF14, #FF7F11);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      mix-blend-mode:difference;
+      text-shadow:0 0 5px #fff,0 0 10px #39FF14,0 0 20px #FF7F11;
+      pointer-events:none;
+      animation: neonFlicker 1.5s infinite alternate;
+      z-index:5;
+    }
+
+    /* Loader UI */
+    #loading-cover {
+      position:absolute; inset:0;
+      display:flex; justify-content:center; align-items:center; flex-direction:column;
+      z-index:10; color:#fff;
+      transition: opacity 0.5s ease;
+    }
+    #unity-logo img { width:450px; height:auto; margin-bottom:20px; }
+    #unity-progress-bar-empty {
+      width:300px; height:15px; background: rgba(255,255,255,0.2);
+      border-radius:10px; overflow:hidden; margin-bottom:15px;
+    }
+    #unity-progress-bar-full { width:0%; height:100%; background:#fff; border-radius:10px; transition: width 0.2s ease; }
+    .spinner { border:5px solid rgba(255,255,255,0.2); border-top:5px solid #fff; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; }
+
+    @keyframes spin { 0%{transform:rotate(0deg);}100%{transform:rotate(360deg);} }
+    @keyframes neonFlicker { 0%{opacity:0.85;filter:blur(1px);}20%{opacity:1;filter:blur(2px);}40%{opacity:0.9;filter:blur(1.5px);}60%{opacity:1;filter:blur(2.5px);}80%{opacity:0.95;filter:blur(1px);}100%{opacity:1;filter:blur(2px);} }
+    @keyframes waveMove { 0%{transform:translate(-60%,-60%) rotate(0deg);}50%{transform:translate(-40%,-40%) rotate(20deg);}100%{transform:translate(-60%,-60%) rotate(0deg);} }
+    @keyframes gradientMove { 0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;} }
+  </style>
+</head>
+<body class="noselect">
+
+  <!-- Background + waves + Among Us -->
+  <div id="bg-blur">
+    <div id="loader-bg">
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <img id="amongus" src="https://cdn.jsdelivr.net/gh/wnl-perez/Space-waves/Untitled.png" alt="Among Us Red">
+    </div>
+  </div>
+
+  <!-- Neon Text -->
+  <div id="neon-text">Space Waves by Wnlperez & ChatGPT</div>
+
+  <!-- Loader UI -->
+  <div id="loading-cover">
+    <div id="unity-logo"><img alt="Space Waves Logo"></div>
+    <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Unity Canvas -->
+  <canvas id="unity-canvas"></canvas>
+
+  <script>
+    // Random loader logo
+    const logoImg = document.querySelector("#unity-logo img");
+    const baseUrl = "https://cdn.jsdelivr.net/gh/wnl-perez/Space-waves/";
+    const logoImages = ["logo1.png","‎absoultbrizz2.png","EJB3.jpg","Stien4.jpg","Are5.jpg","rubrub6.jpg"];
+    logoImg.src = baseUrl + logoImages[Math.floor(Math.random()*logoImages.length)];
+
+    // Among Us animation
+    const amongus = document.getElementById("amongus");
+    let auX = Math.random()*window.innerWidth;
+    let auY = Math.random()*window.innerHeight;
+    let auSpeed = 2;
+    let auDirX = Math.random()<0.5?-1:1;
+    let auDirY = Math.random()<0.5?-1:1;
+    let bobAngle = 0;
+    const waves = document.querySelectorAll(".wave");
+
+    function animateAmongUs() {
+      bobAngle += 0.05;
+      const bobOffset = Math.sin(bobAngle)*10;
+      auX += auSpeed*auDirX;
+      auY += auSpeed*auDirY;
+
+      if(auX > window.innerWidth || auX < -400 || auY > window.innerHeight || auY < -400){
+        const edge = Math.floor(Math.random()*4);
+        switch(edge){
+          case 0: auX=-400; auY=Math.random()*window.innerHeight; break;
+          case 1: auX=window.innerWidth; auY=Math.random()*window.innerHeight; break;
+          case 2: auX=Math.random()*window.innerWidth; auY=-400; break;
+          case 3: auX=Math.random()*window.innerWidth; auY=window.innerHeight; break;
+        }
+        auDirX = Math.random()<0.5?-1:1;
+        auDirY = Math.random()<0.5?-1:1;
+      }
+      amongus.style.left = auX + "px";
+      amongus.style.top = (auY+bobOffset)+"px";
+      requestAnimationFrame(animateAmongUs);
+    }
+    animateAmongUs();
+
+    // Loader elements
+    const bar = document.getElementById("unity-progress-bar-full");
+    const cover = document.getElementById("loading-cover");
+    const bgBlur = document.getElementById("bg-blur");
+    const neonText = document.getElementById("neon-text");
+
+    // Unity loader logic
+    const SPLIT_MAP = {"8ff606b44c774c10d2fce0bd2723fafc.wasm": null};
+
+    async function mergeParts(baseUrl){
+      const parts = [];
+      for(let i=1;i<=99;i++){
+        const testUrl = baseUrl+".part"+i;
+        try{ const head = await fetch(testUrl,{method:"HEAD"}); if(!head.ok) break; parts.push(testUrl); } catch{break;}
+      }
+      if(parts.length===0) return baseUrl;
+      const buffers = await Promise.all(parts.map(async u=>{
+        const r = await fetch(u); if(!r.ok) throw new Error("Failed part "+u); return new Uint8Array(await r.arrayBuffer());
+      }));
+      const total = buffers.reduce((a,b)=>a+b.length,0);
+      const merged = new Uint8Array(total);
+      let offset=0; for(const b of buffers){ merged.set(b,offset); offset+=b.length; }
+      return URL.createObjectURL(new Blob([merged]));
+    }
+
+    async function preMergeAll(){
+      const map={};
+      const files = Object.keys(SPLIT_MAP);
+      const total = files.length;
+      let done=0;
+      for(const file of files){
+        const merged = await mergeParts("Build/"+file);
+        map[file]=merged;
+        done++;
+        bar.style.width = Math.floor((done/total)*100) + "%";
+      }
+      return map;
+    }
+
+    (async()=>{
+      const mergedMap = await preMergeAll();
+      window.SPLIT_MAP = mergedMap;
+      const origFetch = window.fetch;
+      window.fetch = async function(resource,options){
+        if(typeof resource==="string"){
+          const key = resource.split("/").pop();
+          if(mergedMap[key]) return origFetch(mergedMap[key],options);
+        }
+        return origFetch(resource,options);
+      };
+
+      const OrigXHR = window.XMLHttpRequest;
+      window.XMLHttpRequest = function(){
+        const xhr = new OrigXHR();
+        const origOpen = xhr.open;
+        xhr.open = function(method,url,...rest){
+          const key = url.split("/").pop();
+          if(mergedMap[key]) origOpen.call(xhr,method,mergedMap[key],...rest);
+          else origOpen.call(xhr,method,url,...rest);
+        };
+        return xhr;
+      };
+
+      const canvas = document.querySelector("#unity-canvas");
+      const loaderUrl = "Build/fe88344541f01bb3050dae072f44e94a.loader.js";
+      const config = {
+        dataUrl:"Build/353a2471699422bef9c05ee3bdcb0512.data",
+        frameworkUrl:"Build/fcf7310a617f1065feef3c749dd51b28.framework.js",
+        codeUrl:"Build/8ff606b44c774c10d2fce0bd2723fafc.wasm",
+        streamingAssetsUrl:"StreamingAssets",
+        companyName:"Space Waves",
+        productName:"Space Waves",
+        productVersion:"1.0.0"
+      };
+
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = ()=>{
+        createUnityInstance(canvas,config,(progress)=>{
+          bar.style.width = Math.floor(progress*100)+"%";
+          waves.forEach((wave,i)=>{
+            const offset = progress*20;
+            wave.style.transform = `translate(${-50+offset+i*5}%,${-50+offset+i*5}%) rotate(${progress*15}deg)`;
+          });
+        }).then(gameInstance=>{
+          window.gameInstance=gameInstance;
+          // Fade out and remove loader
+          [cover,bgBlur,neonText].forEach(el=>{
+            if(el){
+              el.style.transition = "opacity 1.5s ease";
+              el.style.opacity="0";
+              setTimeout(()=>el.remove(),750);
+            }
+          });
+        }).catch(alert);
+      };
+      document.body.appendChild(script);
+    })();
+
+    function resizeCanvas(){
+      const canvas=document.getElementById("unity-canvas");
+      canvas.width=window.innerWidth;
+      canvas.height=window.innerHeight;
+      canvas.style.width=window.innerWidth+"px";
+      canvas.style.height=window.innerHeight+"px";
+    }
+    window.addEventListener("load",resizeCanvas);
+    window.addEventListener("resize",resizeCanvas);
+  </script>
+
+</body>
+</html>
