@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/MainSiteAssets/style.css?v=9">
+</head>
+<body>
+
+  <!-- ===============================
+       PARTICLE BACKGROUND
+  ================================= -->
+  <div class="background">
+    <canvas id="particles"></canvas>
+  </div>
+
+  <!-- ===============================
+       TOGGLE NOTES
+  ================================= -->
+  <div class="notes-toggle">
+    <label class="switch">
+      <input type="checkbox" id="notesToggle" checked>
+      <span class="slider"></span>
+    </label>
+    <span class="toggle-label">Toggle Notes</span>
+  </div>
+
+  <!-- ===============================
+       HEADER + NAVIGATION
+  ================================= -->
+  <header class="header">
+    <h1 class="title">⚡PROXY NOOK</h1>
+    <nav class="nav">
+      <button onclick="filter('all')">ALL</button>
+      <button onclick="goToGames()">⭐ New Games</button>
+      <button onclick="filter('OpSys')">Browser-os</button>
+      <button onclick="filter('proxy/GS')">Proxys/Gamesites</button>
+    </nav>
+  </header>
+
+  <!-- ===============================
+       GAME CARDS
+  ================================= -->
+  <main class="grid">
+    <div class="card" data-type="OpSys" onclick="openGame('sites/cineos/index.html')">
+      <img src="/pics/cineos.jpg" alt="Cine OS">
+      <div class="title">Cine OS</div>
+    </div>
+    <div class="card" data-type="proxy/GS" onclick="openGame('sites/fern/index.html')">
+      <img src="/pics/fern.jpg" alt="Fern">
+      <div class="title">Fern</div>
+    </div>
+    <div class="card" data-type="proxy/GS" onclick="openGame('sites/nexura/index.html')">
+      <img id="randomImg" alt="Nexura">
+      <div class="title">Nexura</div>
+    </div>
+  </main>
+
+  <!-- ===============================
+       STATUS BAR (Between games and news)
+  ================================= -->
+  <div class="status-bar">
+    <div class="status-item">
+      Battery: <span id="batteryText">--%</span>
+      <div id="battery" class="battery">
+        <div id="batteryFill" class="battery-fill"></div>
+      </div>
+    </div>
+    <div class="status-item">FPS: <span id="fps">0</span></div>
+    <div class="status-item">Time: <span id="time">--:--:--</span></div>
+  </div>
+
+  <!-- ===============================
+       NEWS / REVIEWS BOXES
+  ================================= -->
+  <div class="news-box">
+    <h2>UPDATE 0.0.1 on 3/30/26</h2>
+    <p>Hi and welcome to the new project</p>
+    <p>R.L (intel) nothin for now</p>
+    <div class="visitor-count">
+      <p>Visitor count -----></p> <a href="https://www.hitwebcounter.com/" target="_blank">
+         <img src="https://hitwebcounter.com/counter/counter.php?page=21479204&style=0001&nbdigits=5&type=page&initCount=0" title="Free Tools" alt="Free Tools" border="0" />
+      </a>
+    </div>
+  </div>
+
+  <div class="reviews-box">
+    <h2>Twusted rewvews.came:</h2>
+    <ul>
+      <li>⭐⭐⭐⭐⭐ by justin de jaun davis jr: "i gooned to stickman hook"</li>
+      <li>⭐⭐⭐⭐⭐ by caorl gooaner john buster the 8th: "i deep throated my friend on stickman duel"</li>
+      <li>⭐⭐⭐⭐⭐ by defontgayes big forehead: "i am massive"</li>
+      <li>⭐⭐⭐⭐⭐ by Ruben Lee Loy gooner 10-foot'er: "i think five nights at 'stien's is coming soon..."</li>
+    </ul>
+    <p>Form for game requests / Game site donation / Twusted rewvews.came review:</p>
+    <a href="https://forms.gle/q5rAudv3AMjr3kEs6" target="_blank">https://forms.gle/q5rAudv3AMjr3kEs6</a>
+    <p>CREDITS: games: me and friends. Coding the games to work: me and my bottel of cola with cocain in it also chat j'ai pété</p>
+  </div>
+
+  <!-- ===============================
+       FOOTER
+  ================================= -->
+  <footer class="tag">Wnlperez — choose your own game site</footer>
+
+  <!-- ===============================
+       SCRIPTS
+  ================================= -->
+  <script src="/particles.js"></script>
+  <script src="/main.js"></script>
+</body>
+</html>
