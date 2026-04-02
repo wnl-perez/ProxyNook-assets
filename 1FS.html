@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Proxy Nook</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===== BODY & BACKGROUND ===== */
+body { 
+  margin:0; 
+  font-family:'Orbitron', sans-serif; 
+  color:#0f0;
+  background:linear-gradient(-45deg,#003300,#006600,#003300);
+  background-size:400% 400%; 
+  animation:gradientGreen 15s ease infinite;
+  overflow-x:hidden;
+  padding-bottom:80px; /* space for status bar */
+}
+@keyframes gradientGreen{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* ===== NEWS & REVIEWS BOXES ===== */
+.news-box, .reviews-box {
+  background:rgba(0,0,0,0.8); 
+  border:2px solid #0f0;
+  padding:20px; 
+  margin:20px auto 30px auto; /* extra bottom margin for spacing */
+  width:90%; 
+  max-width:1200px;
+  border-radius:12px; 
+  color:#0f0; 
+  box-shadow:0 0 20px rgba(0,255,0,0.7);
+  overflow-x:auto;
+}
+.news-box h2, .reviews-box h2 {margin-top:0; font-size:26px;}
+.reviews-box ul {padding-left:20px;}
+.reviews-box li {margin-bottom:10px; font-size:18px;}
+
+/* ===== STATUS BAR ===== */
+.status-bar{
+  position:fixed; 
+  bottom:10px; 
+  right:10px;
+  background:rgba(0,0,0,0.6); 
+  border:1px solid #0f0; 
+  border-radius:8px;
+  padding:5px 10px; 
+  font-size:0.85rem; 
+  display:flex; 
+  gap:10px; 
+  z-index:999; /* higher than boxes */
+  box-shadow:0 0 15px #0f0;
+}
+.battery{
+  position:relative;
+  width:120px;
+  height:30px;
+  border:3px solid #0f0;
+  border-radius:6px;
+  background:#111;
+}
+.battery::after{
+  content:'';
+  position:absolute;
+  top:6px;
+  right:-10px;
+  width:8px;
+  height:18px;
+  background:#0f0;
+  border-radius:3px;
+}
+.battery-fill{
+  height:100%;
+  width:0%;
+  background:#0f0;
+  transition:width 0.3s, background 0.3s;
+}
+.charging .battery-fill{background:#0f0;}
+.charging::after{background:#0f0;}
+
+/* ===== NOTES TOGGLE ===== */
+.notes-toggle{
+  position:fixed;
+  top:15px;
+  left:15px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  z-index:50;
+}
+.switch{
+  position:relative;
+  display:inline-block;
+  width:50px;
+  height:26px;
+}
+.switch input{opacity:0;width:0;height:0;}
+.slider{
+  position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+  background-color:#0f0; transition:.4s; border-radius:26px;
+}
+.slider:before{
+  position:absolute; content:""; height:20px; width:20px;
+  left:3px; bottom:3px; background-color:#111; transition:.4s; border-radius:50%;
+}
+input:checked + .slider{background-color:#0f0;}
+input:checked + .slider:before{transform:translateX(24px);}
+
+/* ===== HEADER & NAV ===== */
+.header{text-align:center; padding:20px; position:relative; z-index:10;}
+.header .title{font-size:2.2rem; margin:0 0 10px 0;}
+.nav button{
+  margin:0 5px; padding:8px 15px; background:rgba(0,0,0,0.6);
+  border:1px solid #0f0; color:#0f0; cursor:pointer;
+}
+.nav button:hover{background:rgba(0,255,0,0.3);}
+
+/* ===== GRID CARDS ===== */
+.grid{
+  display:flex; 
+  flex-wrap:wrap; 
+  justify-content:center; 
+  gap:15px; 
+  padding:20px; 
+  z-index:5; 
+  position:relative;
+}
+.card{
+  background:rgba(0,0,0,0.65); 
+  border:1px solid #0f0; 
+  border-radius:10px;
+  width:330px;           /* fixed width */
+  height:240px;          /* fixed height */
+  cursor:pointer; 
+  transition:transform 0.2s, background 0.3s;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.card:hover{
+  transform:scale(1.05); 
+  background:rgba(0,255,0,0.2);
+}
+.card img{
+  width:100%;
+  height:160px;         /* fixed image height */
+  object-fit:cover;     /* scale/crop without distortion */
+  border-top-left-radius:10px; 
+  border-top-right-radius:10px;
+}
+.card .title{
+  text-align:center; 
+  padding:10px 5px; 
+  font-size:1rem;
+  flex:1;               /* fill remaining space consistently */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ===== BACKGROUND & PARTICLES ===== */
+.background{position:fixed; inset:0; z-index:0; overflow:hidden;}
+#particles{position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none;}
+
+/* ===== FOOTER ===== */
+footer.tag{
+  position:fixed; bottom:10px; left:10px; padding:8px 12px;
+  font-size:0.85rem; color:#0f0; background:rgba(0,0,0,0.6);
+  border:1px solid #0f0; border-radius:8px; z-index:50;
+}
+
+/* ===== GAME OVERLAY ===== */
+#gameOverlay{
+  position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95);
+  display:none; z-index:9999;
+}
+#gameContainer{ width:100%; height:100%; }
+.closeBtn{position:absolute; top:10px; right:20px; font-size:28px; color:white; cursor:pointer; z-index:100; background:none; border:none;}
+</style>
+</head>
+<body>
+
+<div class="background"></div>
+<canvas id="particles"></canvas>
+
+<div class="notes-toggle">
+<label class="switch">
+  <input type="checkbox" id="notesToggle" checked>
+  <span class="slider"></span>
+</label>
+Notes
+</div>
+
+<header class="header">
+<h1 class="title">⚡ PROXY NOOK</h1>
+<nav class="nav">
+<button onclick="filter('all')">ALL</button>
+<button onclick="filter('game')">Games</button>
+<button onclick="filter('OpSys')">Browser-OS</button>
+<button onclick="filter('proxy')">Proxys/Gamesites</button>
+</nav>
+</header>
+
+<main class="grid">
+<div class="card" data-type="OpSys" onclick="openGame('https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets/sites/cineos/index.html')">
+<img src="https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets/pics/cineos.jpg" alt="Cine OS">
+<div class="title">Cine OS</div>
+</div>
+<div class="card" data-type="proxy" onclick="openGame('https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets/sites/nexura/index.html')">
+<img id="randomImg" src="" alt="Nexura">
+<div class="title">Nexura</div>
+</div>
+<div class="card" data-type="game" onclick="openGame('https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/1FG/Drivemad.html')">
+  <img src="https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/pics/Dm.png" alt="DriveMad">
+  <div class="title">DriveMad</div>
+</div>
+
+<div class="card" data-type="game" onclick="window.open('https://sites.google.com/view/krmalwnl/wnl-crowned/five-nights-at-the-big-stien', '_blank')">
+  <img src="https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/pics/fnae.png" alt="FNAE">
+  <div class="title">Five Nights at the 'stien's</div>
+</div>
+
+<div class="card" data-type="game" onclick="openGame('https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/1FG/minecraft.html')">
+  <img src="https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/pics/mc.png" alt="Minecraft">
+  <div class="title">Minecraft</div>
+</div>
+
+<div class="card" data-type="game" onclick="openGame('https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/1FG/smd.html')">
+  <img src="https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/pics/smd.png" alt="SMD">
+  <div class="title">Stick Man Duel</div>
+</div>
+
+<div class="card" data-type="game" onclick="openGame('https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/1FG/Gorillatag.html')">
+  <img src="https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/pics/gt.png" alt="Gorillatag">
+  <div class="title">Gorilla tag</div>
+</div>
+
+<div class="card" data-type="game" onclick="window.open('https://sites.google.com/view/krmalwnl/wnl-crowned/space-waves', '_blank')">
+  <img src="https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/games/pics/sw.png" alt="Spacewaves">
+  <div class="title">Space waves</div>
+</div>
+</main>
+
+<div class="status-bar">
+<div class="status-item">Battery: <span id="batteryText">--%</span>
+<div id="battery" class="battery"><div id="batteryFill" class="battery-fill"></div></div>
+</div>
+<div class="status-item">FPS: <span id="fps">0</span></div>
+<div class="status-item">Time: <span id="time">--:--:--</span></div>
+</div>
+
+<!-- =============================== NEWS / REVIEWS BOXES ================================= -->
+    <div class="news-box">
+      <h2>UPDATE 1.0.0 on 4/1/26</h2>
+      <p>so we on v1 the offcial release so hi everyone</p>
+      <p>R.L (intel) nothin for now</p>
+      <div class="visitor-count">
+        <p>Visitor count -----></p>
+        <a href="https://www.hitwebcounter.com/" target="_blank">
+          <img src="https://hitwebcounter.com/counter/counter.php?page=21479204&style=0001&nbdigits=5&type=page&initCount=0" title="Free Tools" alt="Free Tools" border="0" />
+        </a>
+      </div>
+    </div>
+
+
+<div class="reviews-box">
+<h2>Twusted rewvews.came:</h2>
+<ul>
+<li>⭐⭐⭐⭐⭐ by justin de jaun davis jr: "i gooned to stickman hook"</li>
+<li>⭐⭐⭐⭐⭐ by caorl gooaner john buster the 8th: "i deep throated my friend on stickman duel"</li>
+<li>⭐⭐⭐⭐⭐ by defontgayes big forehead: "i am massive"</li>
+<li>⭐⭐⭐⭐⭐ by Ruben Lee Loy gooner 10-foot'er: "i think five nights at 'stien's is coming soon..."</li>
+</ul>
+</div>
+
+<footer class="tag">Wnlperez — choose your own game site</footer>
+
+<!-- GAME OVERLAY -->
+<div id="gameOverlay">
+<div class="closeBtn" onclick="closeGame()">✖</div>
+<div id="gameContainer"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ===== NOTES TOGGLE =====
+  const toggle = document.getElementById('notesToggle');
+  let notesEnabled = toggle.checked;
+  toggle.addEventListener('change', () => {
+    notesEnabled = toggle.checked;
+    localStorage.setItem('notesEnabled', notesEnabled);
+  });
+
+  // ===== RANDOM NEXURA IMAGE =====
+  const images = [
+    "https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/pics/NexusMA.jpg",
+    "https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/pics/NexusMB.jpg",
+    "https://cdn.jsdelivr.net/gh/wnl-perez/ProxyNook-assets@master/pics/NexusMG.jpg"
+  ];
+  const randomImg = document.getElementById('randomImg');
+  if(randomImg){ randomImg.src = images[Math.floor(Math.random()*images.length)]; }
+
+  // ===== OPEN GAME + ALERTS =====
+  window.openGame = async function(url){
+    if(notesEnabled){
+      if(url.includes('cineos')) alert("Blocked screen is a decoy. Press ↑ ↓ ↑ ↓ then click Initiate.");
+      if(url.includes('fern')) alert("It will say 'Not Found.' Click Settings then go back.");
+    }
+    const overlay = document.getElementById('gameOverlay');
+    const container = document.getElementById('gameContainer');
+    overlay.style.display = 'block';
+    container.innerHTML = '';
+    try {
+      const res = await fetch(url);
+      const html = await res.text();
+      const iframe = document.createElement('iframe');
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      iframe.srcdoc = html;
+      container.appendChild(iframe);
+    } catch(e) {
+      container.innerHTML = "<h2>Failed to load.</h2>";
+      console.error(e);
+    }
+  }
+
+  window.closeGame = function(){
+    document.getElementById('gameOverlay').style.display='none';
+    document.getElementById('gameContainer').innerHTML='';
+  }
+
+  // ===== FILTER =====
+  window.filter = function(type){
+    document.querySelectorAll('.card').forEach(card=>{
+      card.style.display = (type==='all'||card.dataset.type===type)?'block':'none';
+    });
+  }
+
+  // ===== STATUS BAR =====
+  function updateTime(){
+    const timeEl = document.getElementById('time');
+    if(timeEl) timeEl.textContent = new Date().toLocaleTimeString();
+  }
+  setInterval(updateTime,1000); updateTime();
+
+  let lastFrame = performance.now(); let frameCount=0;
+  function updateFPS(){
+    const now = performance.now();
+    frameCount++;
+    if(now - lastFrame >= 1000){
+      const fpsEl = document.getElementById('fps'); if(fpsEl) fpsEl.textContent = frameCount;
+      frameCount=0; lastFrame=now;
+    }
+    requestAnimationFrame(updateFPS);
+  }
+  updateFPS();
+
+  if(navigator.getBattery){
+    navigator.getBattery().then(battery=>{
+      function updateBattery(){
+        const level=Math.floor(battery.level*100);
+        const batteryText=document.getElementById('batteryText');
+        const batteryFill=document.getElementById('batteryFill');
+        const batteryBox=document.getElementById('battery');
+        if(batteryText) batteryText.textContent=level+'%';
+        if(batteryFill) batteryFill.style.width=level+'%';
+        if(batteryBox) batteryBox.classList.toggle('charging',battery.charging);
+      }
+      battery.addEventListener('levelchange',updateBattery);
+      battery.addEventListener('chargingchange',updateBattery);
+      updateBattery();
+    });
+  } else { const batteryText=document.getElementById('batteryText'); if(batteryText) batteryText.textContent='N/A'; }
+
+});
+
+// ===== PARTICLES =====
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+window.addEventListener('resize',()=>{ width=canvas.width=window.innerWidth; height=canvas.height=window.innerHeight; });
+
+class Particle{
+  constructor(){ this.reset(); }
+  reset(){ this.x=Math.random()*width; this.y=Math.random()*height; this.vx=(Math.random()-0.5)*0.7; this.vy=(Math.random()-0.5)*0.7; this.size=Math.random()*2+1; this.color='#00ff00'; }
+  update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>width)this.vx*=-1; if(this.y<0||this.y>height)this.vy*=-1; }
+  draw(){ ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
+}
+
+const particlesArray=[];
+for(let i=0;i<100;i++) particlesArray.push(new Particle());
+function animate(){ ctx.clearRect(0,0,width,height); particlesArray.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate);}
+animate();
+</script>
+
+</body>
+</html>
